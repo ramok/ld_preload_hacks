@@ -1,0 +1,32 @@
+This is a tiny helpers-workarounds for fixing bugs and/or adding new feature to
+programs available only in binary form.
+
+By using system linker feature LD_PRELOAD, it's possible intercepts various
+system calls which programs use to, and fixing wrong parameters, and/or calling
+additional system functions.
+
+hack_fix_reuseaddr/
+    Useful for programs which do not use SO_REUSEADDR for tcp sockets.
+    As usual such programs has problems with restarting, and fail with error
+    "Address already in use".
+
+    This helper intercepts socket() and call additional setsockopt(..SO_REUSEADDR);
+
+    Usage:
+    $ LD_PRELOAD=/path/to/hack_fix_reuseaddr.so program
+
+hack_shift_sys_ports/
+    Some programs has hardcoded system IP ports (from 0 to 1023), and usually
+    can be used by programs with root permissions.
+
+    If you want to run some tests, but without root permissions on unprivileged ports,
+    this helper will shift all system IP ports opened by program to unprivileged ports.
+    By default ports shifted by 60000.
+    For example your program open port 111, with this helper it's will be moved to 60111.
+
+    Usage:
+    $ LD_PRELOAD=/path/to/hack_shift_sys_ports.so program
+
+(c) komar@evologics.de 2018
+GPL
+https://github.com/ramok/ld_preload_hacks
